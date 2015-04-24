@@ -1,5 +1,7 @@
 var Class = require('../../database/models/classModel.js');
 var User = require('../../database/models/userModel.js');
+var Payments = require('../payments/paymentController');
+
 
 module.exports.getStudent = function(req, res, next){
   var username = req.params.username;
@@ -44,7 +46,7 @@ module.exports.bookClass = function(req, res, next){
   var student = req.body.student_id;
   req.body.is_booked = true;
   req.body.student = student;
-
+  console.log('Req body in student', req.body);
   
   Class.findByIdAndUpdate(class_id, req.body, function(err, classObject){
     Class.findById(class_id, function(err, classObject){
@@ -53,7 +55,8 @@ module.exports.bookClass = function(req, res, next){
       }else if(!classObject){
         res.status(403).send('Class not found');
       }else{
-        res.status(201).send("Successfully booked a class");    
+        req.body.teacher_id = classObject.teacher;
+        Payments.modifyUserBalance(req, res, next);
       }
     });
   });  

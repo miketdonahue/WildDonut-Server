@@ -5,4 +5,7 @@ module.exports = function(app) {
 
   // app.get('/', paymentController.getAllClasses);
   app.post('/charges', paymentController.createTransaction);
+  app.post('/withdrawls', paymentController.withdraw);
+  app.get('/:id/balance', paymentController.getAccountBalance);
+
 };

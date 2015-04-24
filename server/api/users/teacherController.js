@@ -55,6 +55,7 @@ module.exports.allOpenClasses = function(req, res, next){
       }else if(!classes){
         res.status(403).send('User not found');
       }else{
+        console.log('classes', classes);
         res.json(classes);
       }
     });

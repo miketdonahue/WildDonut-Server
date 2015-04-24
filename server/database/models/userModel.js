@@ -19,7 +19,9 @@ var UserSchema = new mongoose.Schema({
   skills: { type: Array },
   avg_rating: { type: Number, default: null },
   total_ratings: { type: Number, default: null },
-  classes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Class' }]
+  classes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Class' }],
+  account_balance: { type: Number, default: 0 },
+  transaction_history: { type: Array }
 });
 
 // convert password to a hash before saving.
