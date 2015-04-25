@@ -76,6 +76,7 @@ module.exports.createClass = function(req, res, next){
       end_time: req.body.end_time,
       teacher: user._id,
       location: req.body.location,
+      picture_url: req.body.picture_url,
       is_booked: false
     });
 

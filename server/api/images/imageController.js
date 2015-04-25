@@ -7,8 +7,8 @@ module.exports.imageErrors = function(req, res, next){
     console.log('no req.files or req.files.file or both');
     return res.status(403).send('expected multipart/form-data encoding with an image file associated with the file key');
   }
-  if(!req.body.userName && !req.body.className){
-    console.log('no req.body.userName or req.body.className');
+  if(!req.body.name){
+    console.log('no req.body.name');
     return res.status(403).send('expected a username or className with request to generate unique filename');
   }
   if (!/^image\/(jpe?g|png|gif)$/i.test(req.files.file.mimetype)) {
@@ -18,18 +18,9 @@ module.exports.imageErrors = function(req, res, next){
   next();
 };
 
-module.exports.userImageUpload = function(req, res, next){
-  var photoId = req.body.userName + '-profile';
-  awsConfig.s3uploader(req.files.file.path, photoId, function(err, data){
-    if(err){
-      return res.status(500).send('failed to upload to s3').end();
-    }
-    res.status(200).send(data.Location.replace(/"/g, '&quot;')).end();
-  });
-};
-
-module.exports.classImageUpload = function(req, res, next){
-  var photoId = req.body.className + '-banner';
+module.exports.imageUpload = function(req, res, next){
+  var type = req.path.split('/')[1] === 'user' ? '-profile.' : '-banner.';
+  var photoId = req.body.name + type + req.files.file.extension;
   awsConfig.s3uploader(req.files.file.path, photoId, function(err, data){
     if(err){
       return res.status(500).send('failed to upload to s3').end();

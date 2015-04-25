@@ -13,6 +13,7 @@ var ClassesSchema = new mongoose.Schema({
   student: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   location: { type: String },
   is_booked: { type: Boolean },
+  picture_url: { type: String },
   avg_rating: { type: Number, default: null },
   total_ratings: { type: Number, default: null },
   reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }]
