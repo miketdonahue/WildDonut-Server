@@ -11,7 +11,6 @@ module.exports = function(app, passport) {
 
   app.all('*', authController.ensureAuthenticated); //requires authentication except for /login or /signup
   app.get('/:username/student/classes/booked', studentController.getBookings);
-  app.post('/:username/student/classes/booked', studentController.bookClass);
 
   //Teachers
   app.get('/:username/teacher/classes', teacherController.allTeacherClasses);

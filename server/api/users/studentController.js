@@ -39,26 +39,6 @@ module.exports.getBookings = function(req, res, next){
   });
 };
 
-module.exports.bookClass = function(req, res, next){
-  var class_id = req.body.class_id;
-  var student = req.body.student_id;
-  req.body.is_booked = true;
-  req.body.student = student;
-
-  
-  Class.findByIdAndUpdate(class_id, req.body, function(err, classObject){
-    Class.findById(class_id, function(err, classObject){
-      if(err){
-        res.status(400).send('Bad Request');
-      }else if(!classObject){
-        res.status(403).send('Class not found');
-      }else{
-        res.status(201).send("Successfully booked a class");    
-      }
-    });
-  });  
-};
-
 module.exports.classesWithoutReviews = function(req, res, next){
   Class
     .find({student: user._id})
