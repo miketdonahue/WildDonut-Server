@@ -4,7 +4,7 @@ var Options = require('../../database/models/optionModel.js');
 
 module.exports.getAllClasses = function(req, res, next){
   Class.find({})
-       .populate({path: 'teacher', select: 'username'})
+       .populate({path: 'teacher', select: 'username picture_url'})
        .exec(function(err, classInstances){
       if(err){
         res.status(400).send('Bad request');
