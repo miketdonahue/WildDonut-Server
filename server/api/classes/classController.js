@@ -3,7 +3,9 @@ var User = require('../../database/models/userModel.js');
 var Options = require('../../database/models/optionModel.js');
 
 module.exports.getAllClasses = function(req, res, next){
-  Class.find({})
+  var is_booked = false;
+
+  Class.find({is_booked: is_booked})
        .populate({path: 'teacher', select: 'username picture_url'})
        .exec(function(err, classInstances){
       if(err){
