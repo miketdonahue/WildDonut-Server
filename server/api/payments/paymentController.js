@@ -8,6 +8,8 @@ module.exports.createTransaction = function(req, res, next){
   // Get the stripe token with credit card details submitted by the client form
   var stripeToken = req.body.payRequest.token;
   var class_id = req.body.payRequest.class_id;
+  console.log(class_id);
+  console.log(stripeToken);
 
   Class.findById(class_id, function(err, classObject){
     if(err){
@@ -131,11 +133,12 @@ var modifyUserBalance = function(req, res, next){
 
 var bookClass = function(req, res, next){
   var class_id = req.body.payRequest.class_id;
-  var student = req.user;
-  req.body.is_booked = true;
-  req.body.student = student;
-  
-  Class.findByIdAndUpdate(class_id, req.body, {new: true} ,function(err, classObject){
+  var student_id = req.body.payRequest.student_id;
+  var obj = {is_booked: true, student: student_id};
+
+  Class.findByIdAndUpdate(class_id, obj, {new: true} ,function(err, classObject){
+    console.log(classObject);
+    console.log(err);
     if(err){
       res.status(400).send('Bad Request');
     } else if(!classObject){
