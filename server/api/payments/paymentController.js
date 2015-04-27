@@ -42,8 +42,7 @@ module.exports.createWithdrawal = function(req, res, next){
   // After succesfully creating a recipient, create a "stripe" transaction
   // On succesful transaction, decrease the user's account balance
   var stripeToken = req.body.payRequest.token;
-  var user_id = req.body.payRequest.user_id;
-  var withdrawal_amount = req.body.payRequest.withdrawal_amount;
+  var user_id = req.user;
 
   User.findById(user_id, function(err, user){
     if(err){
@@ -52,7 +51,7 @@ module.exports.createWithdrawal = function(req, res, next){
       res.status(403).send('User not found');
     } else{
       //Create a recipient
-      if(withdrawal_amount <= user.account_balance) {
+      if(user.account_balance > 0) {
         stripe.recipients.create({
           name: user.first_name + ' ' + user.last_name, 
           type: "individual",
@@ -63,15 +62,16 @@ module.exports.createWithdrawal = function(req, res, next){
             res.status(403).send("can't create recipient:", err);
           } else {
             stripe.transfers.create({
-              amount: withdrawal_amount*100, // amount in cents
+              amount: user.account_balance*100, // amount in cents
               currency: "usd",
               recipient: recipient.id,
-              statement_descriptor: "Refund from Miyagi for $" + withdrawal_amount
+              statement_descriptor: "Refund from Miyagi for $" + user.account_balance
             }, function(err, withdrawal) {
               if (err) {
                 res.send("can't create withdrawal:", err);
               } else {
                 req.body.transaction_amount = - withdrawal.amount/100;
+                req.body.user_id = user_id;
                 modifyUserBalance(req, res, next);
               }
             });
@@ -85,7 +85,7 @@ module.exports.createWithdrawal = function(req, res, next){
 };
 
 module.exports.getAccountBalance = function(req, res, next){
-  var user_id = req.params.id;
+  var user_id = req.user;
 
   User.findById(user_id)
   .exec(function(err, user){
@@ -104,7 +104,7 @@ module.exports.getAccountBalance = function(req, res, next){
 };
 
 var modifyUserBalance = function(req, res, next){
-  var user_id = req.body.payRequest.user_id;
+  var user_id = req.body.user_id;
   var transaction_id = req.body.transaction_id;
   var transaction_amount = req.body.transaction_amount;
 
@@ -126,13 +126,12 @@ var modifyUserBalance = function(req, res, next){
         }
       });
     }
-    
   });
 };
 
 var bookClass = function(req, res, next){
   var class_id = req.body.payRequest.class_id;
-  var student = req.body.payRequest.user_id;
+  var student = req.user;
   req.body.is_booked = true;
   req.body.student = student;
   
