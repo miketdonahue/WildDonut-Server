@@ -27,7 +27,7 @@ module.exports = function(app, passport) {
   app.get('/:username/student/classes/completed', studentController.classesWithoutReviews);
 
   //Users:
-  app.post('/signup', userController.createUser);
+  app.post('/signup', userController.createUser, passport.authenticate('local'));
   app.post('/login', passport.authenticate(['local', 'facebook']), userController.login);
   app.post('/checkLoginStatus', userController.login);
   app.post('/logout', userController.logout);
